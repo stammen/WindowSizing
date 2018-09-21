@@ -1,0 +1,14 @@
+.vs/
+x64/
+ARM/
+Generated Files/
+AppPackages/
+BundleArtifacts/
+bin/
+x86/
+Debug/
+Release/
+obj/
+Debug/
+*.cache
+*.user
