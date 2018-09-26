@@ -7,6 +7,7 @@ UWP apps like to start up with a certain window size on first launch. The sample
 The trick is to set the min window size before the window is activated. We do this is App.xaml.cs
 
 ```c#
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 
 protected override void OnLaunched(LaunchActivatedEventArgs e)
@@ -30,6 +31,7 @@ In OnLoaded resize the window to your desired size
 
 ```c#
 using System.Diagnostics;
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 
 private void OnLoaded(object sender, RoutedEventArgs e)
