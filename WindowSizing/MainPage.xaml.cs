@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System.Threading;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -24,15 +26,48 @@ namespace WindowSizing
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private ThreadPoolTimer m_timer;
+
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += OnLoaded;
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            Window.Current.SizeChanged += OnWindowSizeChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            Window.Current.SizeChanged -= OnWindowSizeChanged;
+        }
+
+        void OnWindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
+        {
+            if (m_timer != null)
+            {
+                m_timer.Cancel();
+                m_timer = null;
+            }
+
+            TimeSpan period = TimeSpan.FromSeconds(1.0);
+            m_timer = ThreadPoolTimer.CreateTimer(async (source) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    ApplicationView.GetForCurrentView().TryResizeView(new Size(500, 700));
+                });
+
+            }, period);
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var result = ApplicationView.GetForCurrentView().TryResizeView(new Size(500, 800));
+            var result = ApplicationView.GetForCurrentView().TryResizeView(new Size(500, 700));
             Debug.WriteLine("OnLoaded TryResizeView: " + result);
         }
     }
